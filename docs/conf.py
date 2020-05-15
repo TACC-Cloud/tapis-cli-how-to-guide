@@ -17,12 +17,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'api-user-guide'
+project = 'Tapis CLI How-to Guide'
 copyright = '2020, Texas Advanced Computing Center'
 author = 'Texas Advanced Computing Center'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '1.0.0.0a10'
 
 
 # -- General configuration ---------------------------------------------------
