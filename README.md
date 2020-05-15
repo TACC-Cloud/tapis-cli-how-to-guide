@@ -1,7 +1,8 @@
-# SD2E API User Guide
+# Tapis CLI How-to Guide
 
-[![Documentation Status](https://readthedocs.org/projects/api-user-guide/badge/?version=latest)](https://api-user-guide.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/tapis-cli-how-to-guide/badge/?version=latest)](https://tapis-cli-how-to-guide.readthedocs.io/en/latest/?badge=latest)
 
-How-to user guide for the SD2E core platform and additional integrated web service APIs.
+This is a how-to guide for interacting with the Tapis platform using the Tapis CLI.
 
-https://api-user-guide.readthedocs.io/en/latest/
+https://tapis-cli-how-to-guide.readthedocs.io/en/latest/
+
