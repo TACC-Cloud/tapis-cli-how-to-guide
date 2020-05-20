@@ -22,7 +22,7 @@ Create a New Actor
 The function of an actor is exposed as the default command in a Docker
 container. Here, we will create an actor from an existing Docker container image
 called **jturcino/abaco-trial:latest** available on
-'Docker Hub <https://hub.docker.com/r/jturcino/abaco-trial/>'_
+'Docker Hub <https://hub.docker.com/r/jturcino/abaco-trial/>'__.
 The default command for this container simply prints some information about the
 current environment to STDOUT, which will be captured in the actor logs.
 
@@ -359,7 +359,7 @@ python script. Update an existing actor as:
 
 In this example, a new environment variable was provided and the previously-passed
 environment variables were omitted. The Docker repo stayed the same, but must
-still be passed on the command line
+still be passed on the command line.
 
 
 Run Synchronously
@@ -367,7 +367,7 @@ Run Synchronously
 
 The previous message submission (with ``tapis actors submit``) was an
 *asynchronous* run, meaning the command prompt detached from the process after
-it was submit to the actor. In that case, it was up to us to check the execution
+it was submitted to the actor. In that case, it was up to us to check the execution
 to see if it had completed and manually print the logs.
 
 There is also a mode to run actors *synchronously* using ``tapis actors run``,
