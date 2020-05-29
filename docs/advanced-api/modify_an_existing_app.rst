@@ -111,7 +111,7 @@ Update the App
 
 Then, push the app update by performing the following:
 
-.. code-block::
+.. code-block:: bash
 
    $ tapis apps update -F app.json taccuser-fastqc_app-0.11.9
 
