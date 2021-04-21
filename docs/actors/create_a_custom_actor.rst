@@ -1,5 +1,5 @@
-Create a Custom Actor
-=====================
+Initialize a new Tapis Actor project
+====================================
 
 This guide will demonstrate how to create a custom actor from scratch. It is
 assumed you are already familiar with how to
@@ -7,32 +7,74 @@ assumed you are already familiar with how to
 In this example, we will build a simple word count actor that counts and prints
 the number of words in a provided message.
 
+We will demonstrate how to initialize an actor project from scratch.
+
+
+Create a project "word_count_actor"
+-----------------------------------
+To get started with creating an actor, running the ``tapis actors init`` command will fetch a very simple
+code skeleton you can fill in and deploy.
+
+For example:
+
+.. code-block:: bash
+
+   $ tapis actors init "word_count_actor"
+
+   +-------+-----------------------------------------------------+
+   | stage | message                                             |
+   +-------+-----------------------------------------------------+
+   | setup | Project path: ./word_count_actor                    |
+   | setup | CookieCutter variable name=word_count_actor         |
+   | setup | CookieCutter variable project_slug=word_count_actor |
+   | setup | CookieCutter variable docker_namespace=reshg        |
+   | setup | CookieCutter variable docker_registry=e             |
+   | clone | Project path: ./word_count_actor                    |
+   +-------+-----------------------------------------------------+
+
+**Note**
+
+There are many project templates you can start working with.  See tapis actors init -L
+for an up to date listing.
+
+.. code-block:: bash
+
+   $ tapis actors init --list-templates
+
+   +-----------+-----------+-----------------------------------------------------------+----------+
+   | id        | name      | description                                               | level    |
+   +-----------+-----------+-----------------------------------------------------------+----------+
+   | default   | Default   | Basic code and configuration skeleton                     | beginner |
+   | echo      | Echo      | Echo input message                                        | beginner |
+   | sd2e_base | sd2e_base | Default reactor context for                               | beginner |
+   |           |           | docker://sd2e/reactors:python3                            |          |
+   +-----------+-----------+-----------------------------------------------------------+----------+
+
+To use one of these templates do tapis actors init --template <template-name>`
 
 Components of an Actor
 ----------------------
 
-Make a new directory and add the following files:
+The word_count_actor/ project would contain the following files:
 
 .. code-block:: bash
-
-   $ mkdir word-count-actor/ && cd word-count-actor/
-
-   $ touch Dockerfile word_count.py environment.json
 
    $ tree ../word-count-actor/
    word-count-actor/
    ├── Dockerfile
-   ├── environment.json
-   └── word_count.py
-
-   0 directories, 3 files
+   ├── project.ini
+   ├── config.yml
+   ├── default.py
+   ├── requirements.txt
+   ├── secrets.jsonsample
+   └── message.jsonschema
 
 
 Write the Actor Function
 ------------------------
 
-The ``word_count.py`` python script is where the code for your main function can
-be found. An example of a functional actor that performs a word count is:
+The ``default.py`` script can be renamed to ``word_count.py``. The python script is where the code for your
+main function can be found. An example of a functional actor that performs a word count is:
 
 .. code-block:: python
 
@@ -60,6 +102,45 @@ interact with other parts of the Tapis platform. Add the above code to your
 ``word_count.py`` file.
 
 
+Define Requirements
+-------------------
+
+The ``requirements.txt`` file may contain the dependencies required for a project.
+The default ``requirements.txt`` contains agavepy python package.
+
+Create a Dockerfile
+-------------------
+
+The only requirements are python and the agavepy python library, which is
+available through
+`PyPi <https://pypi.org/>`_. These are mentioned in the ``requirements.txt`` file
+A bare-bones Dockerfile needs to satisfy those dependencies, add the actor
+python script, and set a default command to run the actor python script.
+The following lines should be present in your ``Dockerfile``:
+
+.. code-block:: bash
+
+   # pull base image
+   FROM python:3.7-alpine
+
+   # add requirements.txt to docker container
+   ADD requirements.txt /requirements.txt
+
+   # install requirements.txt
+   RUN pip3 install -r /requirements.txt
+
+   # add the python script to docker container
+   ADD word_count.py /word_count.py
+
+   # command to run the python script
+   CMD ["python", "/word_count.py"]
+
+.. tip::
+
+   Creating small Docker images is important for maintaining actor speed and
+   efficiency
+
+
 Define Environment Variables
 ----------------------------
 
@@ -75,33 +156,6 @@ script above. For the purposes of this example, add the following definition to
      "foo": "bar"
    }
 
-
-Create a Dockerfile
--------------------
-
-The only requirements are python and the agavepy python library, which is
-available through
-`PyPi <https://pypi.org/>`_.
-A bare-bones Dockerfile needs to satisfy those dependencies, add the actor
-python script, and set a default command to run the actor python script. Add
-the following lines to your ``Dockerfile``:
-
-.. code-block:: bash
-
-   FROM python:3.7-slim
-
-   RUN pip install --no-cache-dir agavepy==0.9.3
-
-   ADD word_count.py /word_count.py
-
-   RUN chmod +x /word_count.py
-
-   CMD ["python3", "/word_count.py"]
-
-.. tip::
-
-   Creating small Docker images is important for maintaining actor speed and
-   efficiency
 
 Build and Push the Dockerfile
 -----------------------------
