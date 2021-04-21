@@ -32,10 +32,10 @@ For example:
    | clone | Project path: ./word_count_actor                    |
    +-------+-----------------------------------------------------+
 
-**Note**
+.. note::
 
-There are many project templates you can start working with.  See tapis actors init -L
-for an up to date listing.
+  There are many project templates you can start working with.  See tapis actors init -L
+  for an up to date listing.
 
 .. code-block:: bash
 
