@@ -73,8 +73,8 @@ The word_count_actor/ project would contain the following files:
    ├── requirements.txt
    ├── secrets.jsonsample
    └── message.jsonschema
-
-
+   
+ 
 Write the Actor Function
 ------------------------
 
@@ -145,7 +145,16 @@ The following lines should be present in your ``Dockerfile``:
    Creating small Docker images is important for maintaining actor speed and
    efficiency
 
+Runtime Preparation
+-------------------
 
+1. Define secrets.json 
+
+   Copy secrets.json.sample to secrets.json, and obtain the required values from the Infrastructure team for secrets.json. 
+
+2. Define message.jsonschema
+   
+   Schema for Actor launch message. 
 
 Build and Push the Dockerfile
 -----------------------------
