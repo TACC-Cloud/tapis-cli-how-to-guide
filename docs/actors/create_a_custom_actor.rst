@@ -50,7 +50,12 @@ For example:
    |           |           | docker://sd2e/reactors:python3                            |          |
    +-----------+-----------+-----------------------------------------------------------+----------+
 
-To use one of these templates do tapis actors init --template <template-name>`
+To use one of these templates:
+
+.. code-block:: bash
+
+   $ tapis actors init --template echo
+   
 
 Components of an Actor
 ----------------------
@@ -140,21 +145,6 @@ The following lines should be present in your ``Dockerfile``:
    Creating small Docker images is important for maintaining actor speed and
    efficiency
 
-
-Define Environment Variables
-----------------------------
-
-The ``environment.json`` file may contain useful environment variables or
-configurations to pass to the actor at creation time. These variables will be
-part of the "context" taken from the environment, as in the example python
-script above. For the purposes of this example, add the following definition to
-``environment.json``:
-
-.. code-block:: json
-
-   {
-     "foo": "bar"
-   }
 
 
 Build and Push the Dockerfile
