@@ -10,7 +10,7 @@ the number of words in a provided message.
 We will demonstrate how to initialize an actor project from scratch.
 
 
-Create a project "word_count_actor"
+Create a project "hello_world_actor"
 -----------------------------------
 To get started with creating an actor, running the ``tapis actors init`` command will fetch a very simple
 code skeleton you can fill in and deploy.
@@ -19,17 +19,17 @@ For example:
 
 .. code-block:: bash
 
-   $ tapis actors init "word_count_actor"
+   $ tapis actors init
 
    +-------+-----------------------------------------------------+
    | stage | message                                             |
    +-------+-----------------------------------------------------+
-   | setup | Project path: ./word_count_actor                    |
-   | setup | CookieCutter variable name=word_count_actor         |
-   | setup | CookieCutter variable project_slug=word_count_actor |
+   | setup | Project path: ./new_actor                           |
+   | setup | CookieCutter variable name=new_actor                |
+   | setup | CookieCutter variable project_slug=new_actor        |
    | setup | CookieCutter variable docker_namespace=reshg        |
    | setup | CookieCutter variable docker_registry=e             |
-   | clone | Project path: ./word_count_actor                    |
+   | clone | Project path: ./new_actor                           |
    +-------+-----------------------------------------------------+
 
 
@@ -44,32 +44,34 @@ For example:
 .. code-block:: bash
 
    $ tapis actors init --list-templates
-
-   +-----------+-----------+-----------------------------------------------------------+----------+
-   | id        | name      | description                                               | level    |
-   +-----------+-----------+-----------------------------------------------------------+----------+
-   | default   | Default   | Basic code and configuration skeleton                     | beginner |
-   | echo      | Echo      | Echo input message                                        | beginner |
-   | sd2e_base | sd2e_base | Default reactor context for                               | beginner |
-   |           |           | docker://sd2e/reactors:python3                            |          |
-   +-----------+-----------+-----------------------------------------------------------+----------+
+   +--------------------+--------------------+--------------------------------------------------------+----------+
+   | id                 | name               | description                                            | level    |
+   +--------------------+--------------------+--------------------------------------------------------+----------+
+   | default            | Default            | Basic code and configuration skeleton                  | beginner |
+   | echo               | Echo               | Echo message                                           | beginner |
+   | hello_world        | Hello World        | Say Hello, World!                                      | beginner |
+   | sd2e_base          | sd2e_base          | Default reactor context for                            | beginner |
+   |                    |                    | docker://sd2e/reactors:python3                         |          |
+   | tacc_reactors_base | tacc_reactors_base | Default actor context for                              | beginner |
+   |                    |                    | docker://sd2e/reactors:python3                         |          |
+   +--------------------+--------------------+--------------------------------------------------------+----------+
 
 To use one of these templates:
 
 .. code-block:: bash
 
-   $ tapis actors init --template echo
+   $ tapis actors init --template hello_world
 
 
 Components of an Actor
 ----------------------
 
-The word_count_actor/ project would contain the following files:
+The new_actor/ project would contain the following files:
 
 .. code-block:: bash
 
-   $ tree ../word-count-actor/
-   word-count-actor/
+   $ tree ../new_actor/
+   new-actor/
    ├── Dockerfile
    ├── project.ini
    ├── config.yml
@@ -82,33 +84,37 @@ The word_count_actor/ project would contain the following files:
 Write the Actor Function
 ------------------------
 
-The ``default.py`` script can be renamed to ``word_count.py``. The python script is where the code for your
-main function can be found. An example of a functional actor that performs a word count is:
+The ``default.py`` script can be renamed to ``hello_world.py``. The python script is where the code for your
+main function can be found. An example of a functional actor that says "Hello, World" is:
 
 .. code-block:: python
 
-   #!/usr/bin/env python
-   from agavepy.actors import get_context
+    """Say Hello, World or the message received from user input"""
+    from agavepy.actors import get_context
 
-   def main():
-       context = get_context()
-       message = context['raw_message']
+    # function to print the message
+    def say_hello_world(m):
+    """Print message from user if present, else echo "Hello, World"""
+        if m == " ":
+            print("Actor says: Hello, World")
+        else:
+            print("Actor received message: {}".format(m))
 
-       try:
-           word_count = len(message.split(' '))
-           print('The number of words is: ' + str(word_count))
-       except Exception as e:
-           print('An unexpected error has occurred: ' + e)
+    def main():
+    """Main entry to grab message context from user input"""
+        context = get_context()
+        message = context['raw_message']
+        say_hello_world(message)
 
-   if __name__ == '__main__':
-       main()
+    if __name__ == '__main__':
+        main()
 
 
 This code makes use of the **agavepy** python library which we will install in
 the Docker container. The library includes an "actors" object which is useful to
 grab the message and other context from the environment. And, it can be used to
 interact with other parts of the Tapis platform. Add the above code to your
-``word_count.py`` file.
+``hello_world.py`` file.
 
 
 Define Requirements
@@ -139,10 +145,10 @@ The following lines should be present in your ``Dockerfile``:
    RUN pip3 install -r /requirements.txt
 
    # add the python script to docker container
-   ADD word_count.py /word_count.py
+   ADD hello_world.py /hello_world.py
 
    # command to run the python script
-   CMD ["python", "/word_count.py"]
+   CMD ["python", "/hello_world.py"]
 
 .. tip::
 
@@ -154,11 +160,11 @@ Runtime Preparation
 
 1. Define secrets.json
 
-   Copy secrets.json.sample to secrets.json, and obtain the required values from the Infrastructure team for secrets.json.
+   Rename secrets.json.sample to secrets.json, and obtain the required values from the Infrastructure team for secrets.json.
 
 2. Define message.jsonschema
 
-   Schema for Actor launch message.
+   Define the Schema for Actor launch message.
 
 Build and Push the Dockerfile
 -----------------------------
@@ -170,15 +176,15 @@ and push to a repository that you have access to:
 .. code-block:: bash
 
    # Build and tag the image
-   $ docker build -t taccuser/word-count:1.0 .
+   $ docker build -t taccuser/hello-world:1.0 .
    Sending build context to Docker daemon  4.096kB
    Step 1/5 : FROM python:3.7-slim
    ...
    Successfully built b0a76425e8b3
-   Successfully tagged taccuser/word-count:1.0
+   Successfully tagged taccuser/hello-world:1.0
 
    # Push the tagged image to Docker Hub
-   $ docker push taccuser/word-count:1.0
+   $ docker push taccuser/hello-world:1.0
    The push refers to repository [docker.io/taccuser/word-count]
    ...
    1.0: digest: sha256:67cc6f6f00589d9ae83b99d779e4893a25e103d07e4f660c14d9a0ee06a9ddaf size: 1995
@@ -191,19 +197,20 @@ Next, create an actor referring to the Docker repository above.
 
 .. code-block:: bash
 
-   $ tapis actors create --repo taccuser/word-count:1.0 \
-                         -n word-count \
-                         -d "Count the number of words in the message"
+   $ tapis actors create --repo taccuser/hello-world:1.0 \
+                         -n hello-world \
+                         -d "Actor to say Hello, World"
    +----------------+----------------------------+
    | Field          | Value                      |
    +----------------+----------------------------+
-   | id             | KKP0jKRGJ5l5K              |
-   | name           | word-count                 |
+   | id             | NN5N0kGDvZQpA              |
+   | name           | hello-world                |
    | owner          | taccuser                   |
-   | image          | taccuser/word-count:1.0    |
-   | lastUpdateTime | 2020-05-15 18:00:33.685417 |
+   | image          | taccuser/hello-world:1.0   |
+   | lastUpdateTime | 2021-07-14T22:25:06.171534 |
    | status         | SUBMITTED                  |
-   +----------------+----------------------------+
+   | cronOn         | False                      |
+   +----------------+-----------------------------+
 
 After a few seconds, the actor should be in state "READY", meaning it is ready
 to accept and process messages. Verbosely show the actor metadata to see that
@@ -213,37 +220,39 @@ received the environment variables from ``environment.json``:
 .. code-block:: bash
    :emphasize-lines: 7,11,20
 
-   $ tapis actors show -v KKP0jKRGJ5l5K
+   $ tapis actors show -v NN5N0kGDvZQpA
    {
-     "id": "KKP0jKRGJ5l5K",
-     "name": "word-count",
-     "description": "Count the number of words in the message",
-     "owner": "taccuser",
-     "image": "taccuser/word-count:1.0",
-     "createTime": "2020-05-15 18:00:33.685417",
-     "lastUpdateTime": "2020-05-15 18:00:33.685417",
-     "defaultEnvironment": {
-       "foo": "bar"
-     },
-     "gid": 851953,
-     "hints": [],
-     "link": "",
-     "mounts": [],
-     "privileged": false,
-     "queue": "default",
-     "stateless": true,
-     "status": "READY",
-     "statusMessage": " ",
-     "token": true,
-     "uid": 851953,
-     "useContainerUid": false,
-     "webhook": "",
-     "_links": {
-       "executions": "https://api.tacc.utexas.edu/actors/v2/KKP0jKRGJ5l5K/executions",
-       "owner": "https://api.tacc.utexas.edu/profiles/v2/taccuser",
-       "self": "https://api.tacc.utexas.edu/actors/v2/KKP0jKRGJ5l5K"
-     }
-   }
+    "id": "NN5N0kGDvZQpA",
+    "name": "example-actor",
+    "description": "Test actor that says Hello, World",
+    "owner": "sgopal",
+    "image": "tacc/hello-world:latest",
+    "createTime": "2021-07-14T22:25:06.171Z",
+    "lastUpdateTime": "2021-07-14T22:25:06.171Z",
+    "defaultEnvironment": {},
+    "gid": 862347,
+    "hints": [],
+    "link": "",
+    "mounts": [],
+    "privileged": false,
+    "queue": "default",
+    "stateless": true,
+    "status": "READY",
+    "statusMessage": " ",
+    "token": true,
+    "uid": 862347,
+    "useContainerUid": false,
+    "webhook": "",
+    "cronOn": false,
+    "cronSchedule": null,
+    "cronNextEx": null,
+    "_links": {
+      "executions": "https://api.tacc.utexas.edu/actors/v2/NN5N0kGDvZQpA/executions",
+      "owner": "https://api.tacc.utexas.edu/profiles/v2/sgopal",
+      "self": "https://api.tacc.utexas.edu/actors/v2/NN5N0kGDvZQpA"
+      }
+    }
+
 
 
 Run a Test Execution
@@ -255,33 +264,33 @@ words in the message should be returned in the actor execution logs:
 .. code-block:: bash
 
    # Send a message to the word-count actor
-   $ tapis actors submit -m "This is a test message with 8 words" KKP0jKRGJ5l5K
+   $ tapis actors submit -m "Hello, World" NN5N0kGDvZQpA
    +-------------+-------------------------------------+
    | Field       | Value                               |
    +-------------+-------------------------------------+
-   | executionId | K1p3AZZpXjwZr                       |
-   | msg         | This is a test message with 8 words |
+   | executionId | NN5N0kGDvZQpA                       |
+   | msg         | Hello, World                        |
    +-------------+-------------------------------------+
 
    # List executions of the word-count actor
-   $ tapis actors execs list KKP0jKRGJ5l5K
+   $ tapis actors execs list NN5N0kGDvZQpA
    +---------------+----------+
    | executionId   | status   |
    +---------------+----------+
-   | K1p3AZZpXjwZr | COMPLETE |
+   | N4xQ5WM5Np1X0 | COMPLETE |
    +---------------+----------+
 
    # Get the logs from the completed actor execution
-   $ tapis actors execs logs KKP0jKRGJ5l5K K1p3AZZpXjwZr
-   Logs for execution K1p3AZZpXjwZr
-    The number of words is: 8
+   $ tapis actors execs logs NN5N0kGDvZQpA N4xQ5WM5Np1X0
+   Logs for execution N4xQ5WM5Np1X0
+    Actor received message: Hello, World
 
 The actor can also be run synchronously using ``tapis actors run``:
 
 .. code-block:: bash
 
-   $ tapis actors run -m "This is an example of running the actor synchronously" KKP0jKRGJ5l5K
-   The number of words is: 9
+   $ tapis actors run -m "Hello, World" NN5N0kGDvZQpA
+   Actor received message: Hello, World
 
 
 Next Steps
