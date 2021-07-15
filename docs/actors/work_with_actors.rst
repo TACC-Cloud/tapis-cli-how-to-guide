@@ -22,7 +22,7 @@ Create a New Actor
 The function of an actor is exposed as the default command in a Docker
 container. Here, we will create an actor from an existing Docker container image
 called **tacc/hello-world:latest** available on
-'Docker Hub <https://hub.docker.com/repository/docker/tacc/hello-world>'__.
+`Docker Hub <https://hub.docker.com/repository/docker/tacc/hello-world>`__.
 The default command for this container simply prints the message "Hello, World" or
 the message sent to it, which will be captured in the actor logs.
 
@@ -139,30 +139,26 @@ to inspect:
    $ docker run --rm tacc/hello-world:latest cat /hello_world.py
 
 .. code-block:: python
-   :emphasize-lines: 10
+   :emphasize-lines: 13
 
-    1 #!/usr/bin/env python
-    2
-    3 import os
-    4 import sys
-    5 import json
-    6 from agavepy.actors import get_context
-    7
-    8 if __name__ == '__main__':
-    9
-   10     context = get_context()
-   11     print 'FULL CONTEXT:'
-   12     print json.dumps(context, indent=2)
-   13
-   14     print '\nMESSAGE:'
-   15     message = context.message_dict
-   16     print json.dumps(message, indent=2)
-   17
-   18     print '\nFULL ENVIRONMENT:'
-   19     print json.dumps(dict(os.environ), indent=2)
-   20
-   21     print '\nROOT FILES:'
-   22     print ' '.join(os.listdir('/'))
+   1   """Say Hello, World or the message received from user input"""
+   2   from agavepy.actors import get_context
+   3
+   4   def say_hello_world(m):
+   5   """Print message from user if present, else echo "Hello, World"""
+   6       if m == " ":
+   7           print("Actor says: Hello, World")
+   8       else:
+   9           print("Actor received message: {}".format(m))
+   10
+   11  def main():
+   12  """Main entry to grab message context from user input"""
+   13      context = get_context()
+   14      message = context['raw_message']
+   15      say_hello_world(message)
+   16
+   17  if __name__ == '__main__':
+   18      main()
 
 
 This container, when run, will first get the message that was passed to it (from
@@ -261,7 +257,7 @@ actor. In our demo actor, we just expect the actor to print the message passed t
 
 Sure enough, the information in the execution logs match what we expected
 ``hello_world.py`` to print. The message was pulled in by the
-```get_context()`` function. It was not done in this script, but in a normal
+``get_context()`` function. It was not done in this script, but in a normal
 scenario, the actor would then act on the contents of that message to, e.g.,
 kick off a job, perform some data management, send messages to other actors, or
 more.
@@ -280,7 +276,6 @@ meaning the command line stays attached to the process awaiting a response after
 sending a message to the actor. For example:
 
 .. code-block:: bash
-   :emphasize-lines: 9
 
    $ tapis actors run -m "$MESSAGE" NN5N0kGDvZQpA
    FULL CONTEXT:
@@ -288,10 +283,10 @@ sending a message to the actor. For example:
      "username": "taccuser",
      "HOSTNAME": "33d4dd334ef9",
      "_abaco_worker_id": "X5xGkZ0lol0D3",
-     "raw_message": "{\"key1\":\"value1\", \"key2\":\"value2\"}",
+     "raw_message": "Hello, World",
      "actor_dbid": "TACC-PROD_boEg3mEvrKO5w",
      "new_foo": "new_bar",
-     "_abaco_container_repo": "jturcino/abaco-trial:latest",
+     "_abaco_container_repo": "tacc/hello-world:latest",
      "content_type": null,
      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
      "MSG": "{\"key1\":\"value1\", \"key2\":\"value2\"}",

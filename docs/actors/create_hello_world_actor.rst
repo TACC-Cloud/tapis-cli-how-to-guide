@@ -36,7 +36,7 @@ For example:
 
 .. note::
 
-   There are many project templates you can start working with.  See tapis actors init -L
+   There are many project templates you can start working with.  See tapis actors init --list-templates
    for an up to date listing.
 
 
@@ -158,13 +158,10 @@ The following lines should be present in your ``Dockerfile``:
 Runtime Preparation
 -------------------
 
-1. Define secrets.json
+1. Define secrets.json: Rename secrets.json.sample to secrets.json,
+   and obtain the required values from the Infrastructure team for secrets.json.
 
-   Rename secrets.json.sample to secrets.json, and obtain the required values from the Infrastructure team for secrets.json.
-
-2. Define message.jsonschema
-
-   Define the Schema for Actor launch message.
+2. Define message.jsonschema: Define the Schema for Actor launch message.
 
 Build and Push the Dockerfile
 -----------------------------
@@ -218,7 +215,7 @@ it's status is "READY", it is pointing to the correct docker image, and that it
 received the environment variables from ``environment.json``:
 
 .. code-block:: bash
-   :emphasize-lines: 7,11,20
+   :emphasize-lines: 7,10
 
    $ tapis actors show -v NN5N0kGDvZQpA
    {
