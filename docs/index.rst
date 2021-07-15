@@ -46,7 +46,7 @@ you are authenticated with one of the tenants. Additional help is located in the
    :caption: Actors:
 
    actors/work_with_actors
-   actors/create_a_custom_actor
+   actors/create_hello_world_actor.rst
 
 
 
